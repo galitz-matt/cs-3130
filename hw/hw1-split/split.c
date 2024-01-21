@@ -35,12 +35,13 @@ char** string_split(const char *input, const char *sep, int *num_words) {
 char *create_sep(int argc, char* argv[]) {
 	// If no delim is specified, return \t
 	if (argc <= 1) {
-		char *sep = malloc(2 * sizeof(char));
+		char *sep = malloc(3 * sizeof(char));
 		if (sep == NULL) {
 			return NULL;	
 		}
-		sep[0] = '\t';
-		sep[1] = '\0';
+		sep[0] = ' ';
+		sep[1] = '\t';
+		sep[2] = '\0';
 		return sep;
 	}
 	// find length of sep
