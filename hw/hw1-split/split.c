@@ -4,21 +4,32 @@
 #include <string.h>
 #include <stdio.h>
 
-void string_split(const char *input, const char *sep, int *num_words) {
-	// if (strchr(sep, *input) != NULL) {
-	// 	printf("[]");
-	// }	
-	for (; *input != '\0';) {
+char** string_split(const char *input, const char *sep, int *num_words) {
+	char **result = NULL;
+	if (strchr(sep, *input) != NULL) {
+		char *word = malloc(sizeof(char));
+		word[0] = '\0';
+		result = realloc(result, (*num_words + 1) * sizeof(char *));
+		result[*num_words] = word;
+		
+		(*num_words)++;
+	}
+
+	while (*input != '\0') {
 		input += strspn(input, sep);
 		int spn = strcspn(input, sep);
-		printf("[");
-		for (int i = 0; i < spn; i++) {
-			printf("%c", *input);
-			input++;
-		}
-		printf("]");
+
+		char *word = malloc((spn + 1) * sizeof(char));
+		strncpy(word, input, spn);
+		word[spn] = '\0';
+
+		result = realloc(result, (*num_words + 1) * sizeof(char *));
+		result[*num_words] = word;
+		(*num_words)++;
+		input += spn;
 	}
-	printf("\n");
+
+	return result;
 }
 
 char *create_sep(int argc, char* argv[]) {
@@ -74,7 +85,13 @@ int main(int argc, char* argv[]) {
 		}
 		// split string
 		int num_words = 0;
-		string_split(input, sep, &num_words);
+		char **result = string_split(input, sep, &num_words);
+		for (int i = 0; i < num_words; i++) {
+			printf("[%s]", result[i]);
+			free(result[i]);
+		}
+		printf("\n");
+		free(result);
 	}
 	free(sep);
 	return 0;
