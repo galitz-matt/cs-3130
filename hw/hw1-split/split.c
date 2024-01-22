@@ -2,8 +2,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
-char** string_split(const char *input, const char *sep, int *num_words) {
+char **string_split(const char *input, const char *sep, int *num_words) {
 	char **result = NULL;
 	if (strchr(sep, *input) != NULL) {
 		char *word = malloc(sizeof(char));

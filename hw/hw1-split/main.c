@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 char *create_sep(int argc, char* argv[]) {
 	if (argc <= 1) {
