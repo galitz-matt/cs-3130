@@ -10,8 +10,7 @@ char **string_split(const char *input, const char *sep, int *num_words) {
 		char *word = malloc(sizeof(char));
 		word[0] = '\0';
 		result = realloc(result, (*num_words + 1) * sizeof(char *));
-		result[*num_words] = word;
-		
+		result[*num_words] = word;		
 		(*num_words)++;
 	}
 
@@ -22,7 +21,7 @@ char **string_split(const char *input, const char *sep, int *num_words) {
 		char *word = malloc((spn + 1) * sizeof(char));
 		strncpy(word, input, spn);
 		word[spn] = '\0';
-
+        
 		result = realloc(result, (*num_words + 1) * sizeof(char *));
 		result[*num_words] = word;
 		(*num_words)++;
