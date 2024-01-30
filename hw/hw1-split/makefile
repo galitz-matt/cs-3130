@@ -12,7 +12,7 @@ LIBS =
 all: split.out
 
 split.out: split.o main.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o split.out split.o main.o $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o split.out $^ $(LIBS)
 
 clean:
 	rm -f *.o split.out
