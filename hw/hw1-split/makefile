@@ -9,10 +9,10 @@ LIBS =
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-all: split.out
+all: split
 
-split.out: split.o main.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o split.out $^ $(LIBS)
+split: split.o main.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o split $^ $(LIBS)
 
 clean:
-	rm -f *.o split.out
+	rm -f *.o split
