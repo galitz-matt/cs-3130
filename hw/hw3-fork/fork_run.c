@@ -101,13 +101,3 @@ char *parallelgetoutput(int count, const char **argv_base) {
 	return output;
 }
 
-int main() {
-	const char *argv_base[] = {
-        	"/bin/echo", "running", NULL
-    	};
-    	const char *output = parallelgetoutput(2, argv_base);
-
-    	printf("Text: [%s]\n", output);
-	free((char *)output);
-	return 0;
-}
