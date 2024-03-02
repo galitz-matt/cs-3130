@@ -18,6 +18,11 @@ size_t translate(size_t va) {
     size_t page_number = va >> POBITS;
     size_t offset = va & ((1 << POBITS) - 1);
     size_t *page_table = (size_t *)ptbr;
+    size_t max_index = 4096 / sizeof(size_t) - 1;
+
+    if (page_number > max_index) {
+        return (size_t)-1; // page number is out of bounds return error
+    }
     size_t entry = page_table[page_number];
 
     if ((entry & 1) == 0) {
@@ -32,7 +37,7 @@ size_t translate(size_t va) {
 
 void page_allocate(size_t va) {
     if (ptbr == 0) {
-        if (posix_memalign((void **)&ptbr, 4096, 4096) == 0) {
+        if (posix_memalign((void **)&ptbr, 4096, 4096) != 0) {
             perror("Failed to allocate memory for page table\n");
             exit(EXIT_FAILURE);
         }
@@ -52,3 +57,4 @@ void page_allocate(size_t va) {
         page_table[page_number] = (physical_page_number << 1) | 1;
     }
 }
+
