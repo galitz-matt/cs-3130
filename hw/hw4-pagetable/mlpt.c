@@ -15,18 +15,18 @@ size_t translate(size_t va) {
         // no page table exists
         return (size_t)-1;
     }
-    
+
     // calculate page number and offset from the virtual address
     size_t page_number = va >> POBITS;
     size_t offset = va & ((1 << POBITS) - 1);
-    
+
     // max index in table
     size_t max_index = (4096 / sizeof(size_t)) - 1;
     if (page_number > max_index) {
         // page number is out of bounds return error
         return (size_t)-1;
     }
-    
+
     // access the page table
     size_t *page_table = (size_t *)ptbr;
     size_t entry = page_table[page_number];
@@ -53,17 +53,17 @@ void page_allocate(size_t va) {
         // initialize the page table w/ zeros
         memset((void *)ptbr, 0, 4096);
     }
-    
+
     size_t page_number = va >> POBITS;
     size_t *page_table = (size_t *)ptbr;
-    
+
     size_t max_index = (4096 / sizeof(size_t)) - 1;
     // make sure index isn't out of bounds
     if (page_number > max_index) {
         perror("Virtual address exceeds page table capacity\n");
         exit(EXIT_FAILURE);
     }
-    
+
     if ((page_table[page_number] & 1) == 0) {
         // entry is invalid, allocate a new page
         size_t *new_page;
@@ -79,4 +79,3 @@ void page_allocate(size_t va) {
         page_table[page_number] = (physical_page_number << 1) | 1;
     }
 }
-
