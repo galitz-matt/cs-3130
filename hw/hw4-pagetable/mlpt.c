@@ -40,7 +40,7 @@ void page_allocate(size_t va) {
     }
     
     size_t page_number = va >> POBITS;
-    size_t page_table = (size_t *)ptbr;
+    size_t *page_table = (size_t *)ptbr;
     
     if ((page_table[page_number] & 1) == 0) {
         size_t *new_page;
