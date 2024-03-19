@@ -1,81 +1,54 @@
 #define _XOPEN_SOURCE 700
 #include "config.h"
-#include <stddef.h>
+#include "mlpt.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include <stdalign.h>
 
+size_t ptbr;
 
-size_t ptbr = 0;
-
-
-size_t translate(size_t va) {
+size_t translate(size_t virtual_address) {
+    size_t offset = virtual_address & ((1 << POBITS) - 1);
+    int vpn_bits = POBITS - 3; // calc bits for VPN
+    int vpn_mask = (1 << vpn_bits) - 1; // mask for VPN extraction
+    size_t vpn;
     if (ptbr == 0) {
-        // no page table exists
-        return (size_t)-1;
+        return ~0uL; // throw error if ptbr not set
     }
-
-    // calculate page number and offset from the virtual address
-    size_t page_number = va >> POBITS;
-    size_t offset = va & ((1 << POBITS) - 1);
-
-    // max index in table
-    size_t max_index = (4096 / sizeof(size_t)) - 1;
-    if (page_number > max_index) {
-        // page number is out of bounds return error
-        return (size_t)-1;
+    size_t current_pt = ptbr;
+    for (int i = LEVELS - 1; i >= 0; i -= 1) {
+        vpn = (virtual_address >> (POBITS + (i * vpn_bits))) & vpn_mask; // compute vpn for current level
+        size_t *pte_address = (size_t *) (current_pt + vpn + sizeof(size_t)); // compute address of pte
+        if (*pte_address & 0x1) { // check if page is present
+            current_pt = *pte_address & (~0x1); // get physical address from pte
+        }
+        else {
+            return ~0uL; // return error if page isn't present
+        }
     }
-
-    // access the page table
-    size_t *page_table = (size_t *)ptbr;
-    size_t entry = page_table[page_number];
-
-    // check if the entry is valid
-    if ((entry & 1) == 0) {
-        return (size_t)-1;
-    }
-
-    // calculate the physical address
-    size_t physical_page_number = entry >> 1;
-    size_t physical_address = (physical_page_number << POBITS) | offset;
-    return physical_address;
+    current_pt += offset; // add offset to phsyical address
+    return current_pt;
 }
 
-
-void page_allocate(size_t va) {
+void page_allocate(size_t virtual_address) {
+    int pt_size = 1 << POBITS;  // compute size of page table
+    int vpn_bits = POBITS - 3; // compute bits for VPN
+    int vpn_mask = (1 << vpn_bits) - 1; // create mask for VPN
+    size_t vpn;
     if (ptbr == 0) {
-        // allocate the root page table if doesn't exist
-        if (posix_memalign((void **)&ptbr, 4096, 4096) != 0) {
-            perror("Failed to allocate memory for page table\n");
-            exit(EXIT_FAILURE);
-        }
-        // initialize the page table w/ zeros
-        memset((void *)ptbr, 0, 4096);
+        posix_memalign((void **) &ptbr, pt_size, pt_size); // allocate root page table if not already
+        memset((size_t *) ptbr, 0, pt_size); // init pt w/ zeros
     }
-
-    size_t page_number = va >> POBITS;
-    size_t *page_table = (size_t *)ptbr;
-
-    size_t max_index = (4096 / sizeof(size_t)) - 1;
-    // make sure index isn't out of bounds
-    if (page_number > max_index) {
-        perror("Virtual address exceeds page table capacity\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if ((page_table[page_number] & 1) == 0) {
-        // entry is invalid, allocate a new page
-        size_t *new_page;
-        if (posix_memalign((void **)&new_page, 4096, 4096) != 0) {
-            perror("Failed to allocate memory for new page\n");
-            exit(EXIT_FAILURE);
+    size_t current_pt = ptbr;
+    for (int i = LEVELS - 1; i >= 0; i -= 1) {
+        vpn = (virtual_address >> (POBITS + (i * vpn_bits))) & vpn_mask; // compute VPN for current level
+        size_t *pte_address = (size_t *) (current_pt + vpn * sizeof(size_t)); // compute address of pte
+        if ((*pte_address & 0x1) == 0) { // check if page not already allocated
+            posix_memalign((void **) &current_pt, pt_size, pt_size); // allocate a new page
+            *pte_address = current_pt | 0x1; // update pte w/ address of new page and mark as present
         }
-        // initialize new page w/ zeros
-        memset(new_page, 0, 4096);
-
-        size_t physical_page_number = ((size_t)new_page) >> POBITS;
-        // mark entry as valid
-        page_table[page_number] = (physical_page_number << 1) | 1;
+        else {
+            current_pt = *pte_address & ~0x1; // if page already allocated, get physical address
+        }
     }
 }

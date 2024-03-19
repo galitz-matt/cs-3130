@@ -1,3 +1,4 @@
+#include <stddef.h>
 /**
  * Page table base register.
  * Declared here so tester code can look at it; because it is extern
