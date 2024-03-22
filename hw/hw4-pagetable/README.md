@@ -14,3 +14,37 @@ Example configuration:
 ```c
 #define LEVELS  1
 #define POBITS  12
+```
+
+Example usage:
+
+```c
+#include "mlpt.h"
+
+int main() {
+    // Example virtual address
+    size_t va = 0x12345;
+
+    // Allocate a page for the given virtual address
+    page_allocate(va);
+
+    // Translate the virtual address to a physical address
+    size_t pa = translate(va);
+
+    if (pa == (size_t)-1) {
+        printf("Translation failed: Address not allocated.\n");
+    } else {
+        printf("Translated address: %lx\n", pa);
+    }
+
+    return 0;
+}
+```
+
+## Big-O Analysis
+### translate()
+- `Time Compleixty`: O(LEVELS)
+- `Space Complexity`: O(1)
+### page_allocate()
+- `Time Complextiy`: O(LEVELS)
+- `Space Complexity`: O(LEVELS)
