@@ -48,3 +48,17 @@ int main() {
 ### page_allocate()
 - Time: O(LEVELS)
 - Space: O(LEVELS)
+
+## Deallocation Interface
+
+ We propose a deallocation function:
+
+```c
+void page_deallocate(size_t va);
+```
+Which would free physical memory associated w/ a virtual address. (Essentially a complement for page_allocate()).
+
+### Challenges
+- <strong>Resource Counting</strong>: To deallocate pages safely, the library must track the number of references to each page. This would require singificant changes to the current implementation.
+- <strong>Memory Fragmentation</strong>: Deallocating individual pages can lead to memory fragmentation. Addressing fragmentation requires implementation of compaction strategies which is non-trivial.
+- <strong>Safety</strong>: Ensuring that a page is safe to deallocate is non-trivial. Accidental deallocation of in-use memory can lead to undefined behavior and security vulnerabilities.
