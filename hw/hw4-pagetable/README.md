@@ -43,8 +43,8 @@ int main() {
 
 ## Big-O Analysis
 ### translate()
-- `Time Compleixty`: O(LEVELS)
-- `Space Complexity`: O(1)
+- Time: O(LEVELS)
+- Space: O(1)
 ### page_allocate()
-- `Time Complextiy`: O(LEVELS)
-- `Space Complexity`: O(LEVELS)
+- Time: O(LEVELS)
+- Space: O(LEVELS)
