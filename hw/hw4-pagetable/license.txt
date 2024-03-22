@@ -1,0 +1,17 @@
+GPL: (GNU General Public License)
+- Description: This is a copyleft license that requires works to be open-sourced under the GPL also.
+- Pros: Ensures the software is free and open source, this encourages contributions.
+- Cons: This is restrictive for commercial use; all derivative works must also be open source under GPL.
+- Decision: Not chosen due to the restrictions on commercialization
+
+LGPL: (Lesser General Public License)
+- Description: Similar to GPL but it allows linking with closed-source propietary software.
+- Pros: Offers greater flexibility than GPL in commerical applications.
+- Cons: Restrictions still exist which hinder commercialization
+- Decision: This option was considered but ultimately not chosen for its restrictions.
+
+MIT License
+- Description: A free software license with little restrictions on how software can be used and distributed.
+- Pros: Allows for use in both open-source and propietary software
+- Cons: Offers less protections against propietary exploitation
+- Decision: Chosen for its simplicity and flexibility
