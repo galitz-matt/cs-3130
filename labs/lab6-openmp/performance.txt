@@ -1,0 +1,7 @@
+No Parallelization: 34389256 ns
+Even Split: 23283495 ns
+Task Queue: 33666934 ns
+Reduction w/ Atomic Operations: 46163242 ns
+Reduction w/ Partial Sums: 38941054 ns
+
+The Even Split technique was the fastest. This is the case due to the minimal overhead (no atomic operations) and because the work was evenly distributed across the threads. Each thread can independently complete their portion of the work with close to no idle time.
