@@ -100,3 +100,4 @@ size_t tlb_translate(size_t va) {
 	update_LRU(index, chosen_way);
 	return pa; 	
 }
+
