@@ -9,7 +9,7 @@
 void forward_attack_0(struct message *message) {
 	if (message->from == 'A' && message->to == 'B') {
 		char new_data[1024];
-		snprintf(new_data, sizeof(new_data), "PAY $10001438 TO M");
+		snprintf(new_data, sizeof(new_data), "PAY $5000719 TO M");
 		strncpy((char * restrict)message->data, new_data, sizeof(message->data));
 		message->data_size = strlen((const char*)message->data);
 	}
@@ -21,7 +21,7 @@ void forward_attack_0(struct message *message) {
  */
 void forward_attack_1(struct message *message) {
 	if (message->from == 'A' && message->to == 'B' && message->is_encrypted) {
-		const char *new_payment_instr = "PAY $5000 TO M";
+		const char *new_payment_instr = "PAY $5000719 TO M";
 		struct message *new_msg = new_message('A', 'B', new_payment_instr, true, false);
 		memcpy(message, new_msg, sizeof(struct message));
 	}
